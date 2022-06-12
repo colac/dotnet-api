@@ -1,0 +1,140 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+# A sample workflow which checks out the code, builds a container
+# image using Docker and scans that image for vulnerabilities using
+# Snyk. The results are then uploaded to GitHub Security Code Scanning
+#
+# For more examples, including how to limit scans to only high-severity
+# issues, monitor images for newly disclosed vulnerabilities in Snyk and
+# fail PR checks for new vulnerabilities, see https://github.com/snyk/actions/
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: Create and publish a Docker image
+on:
+  push:
+    branches: [ "dev", "main" ]
+  #pull_request:
+    # The branches below must be a subset of the branches above
+  #  branches: [ "main" ]
+    
+permissions:
+  contents: read
+  
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+# Create a Unique ID to use for the container name
+  set-unique-id:
+    runs-on: ubuntu-latest
+    outputs:
+      UNIQUE_ID: ${{ steps.stepuniqueid.outputs.uniqueid }}
+    steps:
+    #- name: Sets UNIQUE_ID
+    - id: stepuniqueid
+      env:
+        UNIQUE_ID_VALUE: ${{ github.run_id }}-${{ github.run_attempt }}
+      run: echo "::set-output name=uniqueid::$UNIQUE_ID_VALUE"
+
+  set-container-name:
+    needs: set-unique-id
+    runs-on: ubuntu-latest
+    outputs:
+      REPO_IMAGE_NAME: ${{ steps.stepcontainername.outputs.containername }}
+    steps:
+    - name: Sets branch_name var to main
+      run: |
+        echo "BRANCH_NAME=main" >> $GITHUB_ENV
+      if: github.ref == 'refs/heads/main'
+
+    - name: Sets branch_name var to dev
+      run: |
+        echo "BRANCH_NAME=dev" >> $GITHUB_ENV
+      if: github.ref != 'refs/heads/main'
+
+    - name: uniqueId UNIQUE_ID
+      run: |
+        echo "uniqueId" ${{needs.set-unique-id.outputs.UNIQUE_ID}}
+
+    - id: stepcontainername
+      env:
+        REPO_IMAGE_NAME_VALUE: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/${{ env.BRANCH_NAME }}-${{ github.run_id }}-${{ github.run_attempt }}
+      run: echo "::set-output name=containername::$REPO_IMAGE_NAME_VALUE"
+
+  build-and-push-image:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+        with:
+          images: ${{ needs.set-container-name.outputs.REPO_IMAGE_NAME }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          
+#name: Snyk Container
+#on:
+#  push:
+#    branches: [ "dev", "main" ]
+#  pull_request:
+#    # The branches below must be a subset of the branches above
+#    branches: [ "main" ]
+
+#permissions:
+#  contents: read
+
+#jobs:
+  snyk:
+    needs: [set-container-name, build-and-push-image]
+    permissions:
+      contents: read # for actions/checkout to fetch code
+      security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build a Docker image
+      run: docker build -t ${{ needs.set-container-name.outputs.REPO_IMAGE_NAME }} .
+    - name: Run Snyk to check Docker image for vulnerabilities
+      # Snyk can be used to break the build when it detects vulnerabilities.
+      # In this case we want to upload the issues to GitHub Code Scanning
+      continue-on-error: true
+      uses: snyk/actions/docker@14818c4695ecc4045f33c9cee9e795a788711ca4
+      env:
+        # In order to use the Snyk Action you will need to have a Snyk API token.
+        # More details in https://github.com/snyk/actions#getting-your-snyk-token
+        # or you can signup for free at https://snyk.io/login
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      with:
+        image: your/image-to-test
+        args: --file=Dockerfile
+    - name: Upload result to GitHub Code Scanning
+      uses: github/codeql-action/upload-sarif@v2
+      with:
+        sarif_file: snyk.sarif
