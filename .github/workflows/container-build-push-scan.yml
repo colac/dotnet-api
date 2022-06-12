@@ -42,7 +42,7 @@ jobs:
       env:
         UNIQUE_ID_VALUE: ${{ github.run_id }}-${{ github.run_attempt }}
       run: echo "::set-output name=uniqueid::$UNIQUE_ID_VALUE"
-
+# Create container name var REPO_IMAGE_NAME
   set-container-name:
     needs: set-unique-id
     runs-on: ubuntu-latest
@@ -67,14 +67,13 @@ jobs:
       env:
         REPO_IMAGE_NAME_VALUE: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/${{ env.BRANCH_NAME }}-${{ github.run_id }}-${{ github.run_attempt }}
       run: echo "::set-output name=containername::$REPO_IMAGE_NAME_VALUE"
-
+# Build and push the container to github container registry
   build-and-push-image:
-  needs: [set-container-name]
+  needs: set-container-name
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -112,6 +111,7 @@ jobs:
 #  contents: read
 
 #jobs:
+# Scan the image with snyk, SNYK_TOKEN saved in github repositories secrets
   snyk:
     needs: [set-container-name, build-and-push-image]
     permissions:
