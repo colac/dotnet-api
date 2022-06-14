@@ -8,37 +8,37 @@ build_property.PlatformNeutralAssembly =
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = MyFirstAzureWebApp
 build_property.RootNamespace = MyFirstAzureWebApp
-build_property.ProjectDir = /home/hugo/MyFirstAzureWebApp/
+build_property.ProjectDir = /home/hugo/dotnet-api/
 build_property.RazorLangVersion = 6.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = /home/hugo/MyFirstAzureWebApp
+build_property.MSBuildProjectDirectory = /home/hugo/dotnet-api
 build_property._RazorSourceGeneratorDebug = 
 
-[/home/hugo/MyFirstAzureWebApp/Pages/Error.cshtml]
+[/home/hugo/dotnet-api/Pages/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXMvRXJyb3IuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[/home/hugo/MyFirstAzureWebApp/Pages/Index.cshtml]
+[/home/hugo/dotnet-api/Pages/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXMvSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[/home/hugo/MyFirstAzureWebApp/Pages/Privacy.cshtml]
+[/home/hugo/dotnet-api/Pages/Privacy.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXMvUHJpdmFjeS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[/home/hugo/MyFirstAzureWebApp/Pages/Shared/_ValidationScriptsPartial.cshtml]
+[/home/hugo/dotnet-api/Pages/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXMvU2hhcmVkL19WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[/home/hugo/MyFirstAzureWebApp/Pages/_ViewImports.cshtml]
+[/home/hugo/dotnet-api/Pages/_ViewImports.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXMvX1ZpZXdJbXBvcnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[/home/hugo/MyFirstAzureWebApp/Pages/_ViewStart.cshtml]
+[/home/hugo/dotnet-api/Pages/_ViewStart.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXMvX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[/home/hugo/MyFirstAzureWebApp/Pages/Shared/_Layout.cshtml]
+[/home/hugo/dotnet-api/Pages/Shared/_Layout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXMvU2hhcmVkL19MYXlvdXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = b-vkyv4qf2tj
